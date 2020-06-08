@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 @Component({
   selector: 'app-datos',
   templateUrl: './datos.component.html',
-  styleUrls: ['./datos.component.scss']
+  styleUrls: ['./datos.component.scss'],
 })
 export class DatosComponent implements OnInit {
   forma: FormGroup;
@@ -13,29 +13,33 @@ export class DatosComponent implements OnInit {
   constructor() {
     this.forma = new FormGroup({
       nombreCompleto: new FormGroup({
-        nombre: new FormControl('', [Validators.required, Validators.minLength(4), this.noRicardo] ),
-        apellido: new FormControl('', Validators.required)
+        nombre: new FormControl('', [
+          Validators.required,
+          Validators.minLength(4),
+          this.noRicardo,
+        ]),
+        apellido: new FormControl('', Validators.required),
       }),
       usuario: new FormControl('', [Validators.required], this.existeUsuario),
       pass: new FormControl('', [Validators.required]),
       pass2: new FormControl('', Validators.required),
-      correo: new FormControl('', [Validators.required, Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$')]),
-      edad: new FormControl('', [Validators.required, Validators.maxLength(3), this.mayorEdad]),
+      correo: new FormControl('', [
+        Validators.required,
+        Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,4}$'),
+      ]),
+      edad: new FormControl('', [Validators.required, this.mayorEdad]),
       cliente: new FormControl('', Validators.required),
       vacaciones: new FormControl(false, Validators.required),
-      intereses: new FormArray([
-        new FormControl('', Validators.required)
-      ])
+      intereses: new FormArray([new FormControl('', Validators.required)]),
     });
 
     this.forma.controls.pass2.setValidators([
       Validators.required,
-      this.noIgual.bind(this.forma) // this.forma = this
+      this.noIgual.bind(this.forma), // this.forma = this
     ]);
-   }
-
-  ngOnInit(): void {
   }
+
+  ngOnInit(): void {}
 
   guardar() {
     console.log(this.forma);
@@ -46,38 +50,35 @@ export class DatosComponent implements OnInit {
     intereses.push(new FormControl('', Validators.required));
   }
 
-  noRicardo(control: FormControl): {[s: string]: boolean} {
+  noRicardo(control: FormControl): { [s: string]: boolean } {
     if (control.value === 'Ricardo') {
       return { noRicardo: true };
     }
   }
 
-  noIgual(control: FormControl): {[s: string]: boolean} {
+  noIgual(control: FormControl): { [s: string]: boolean } {
     const forma: any = this; // this = this.forma
     if (control.value !== forma.controls.pass.value) {
       return { noigual: true };
     }
   }
 
-  mayorEdad(control: FormControl): {[s: string]: boolean}{
-    if (control.value <= 18 ){
-      return {mayorEdad : true};
+  mayorEdad(control: FormControl): { [s: string]: boolean } {
+    if (control.value <= 18) {
+      return { mayorEdad: true };
     }
   }
 
   existeUsuario(control: FormControl): Promise<any> | Observable<any> {
-    const promesa = new Promise(
-      (resolve, reject) => {
-        setTimeout(() => {
-          if (control.value === 'ricky') {
-            resolve({existe: true});
-          } else {
-            resolve(null);
-          }
-        }, 3000);
-      }
-    );
+    const promesa = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (control.value === 'ricky') {
+          resolve({ existe: true });
+        } else {
+          resolve(null);
+        }
+      }, 3000);
+    });
     return promesa;
   }
-
 }
